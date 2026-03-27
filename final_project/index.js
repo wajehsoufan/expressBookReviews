@@ -11,13 +11,13 @@ app.use(express.json());
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
 app.use("/customer/auth/*", function auth(req, res, next) {
-    const authHeader = req.headers["authorization"]; // get header
+    const authHeader = req.headers["authorization"]; 
 
     if (!authHeader) {
         return res.status(401).json({ message: "Authorization header missing" });
     }
 
-    // authHeader should start with "Bearer "
+    
     const tokenParts = authHeader.split(" ");
     if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
         return res.status(401).json({ message: "Token missing or malformed" });
@@ -25,12 +25,12 @@ app.use("/customer/auth/*", function auth(req, res, next) {
 
     const token = tokenParts[1];
 
-    // Verify token
+     
     jwt.verify(token, "fingerprint_customer", (err, decoded) => {
         if (err) {
             return res.status(403).json({ message: "Invalid or expired token" });
         }
-        req.user = decoded; // attach username to request
+        req.user = decoded;  
         next();
     });
 });
