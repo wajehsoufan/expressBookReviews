@@ -2,7 +2,7 @@ const express = require('express');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
-const axios = require('axios'); // add at the top with other requires
+const axios = require('axios'); 
 const public_users = express.Router();
 
 
@@ -33,7 +33,7 @@ public_users.get('/axios-isbn/:isbn', (req, res) => {
 
 public_users.get('/axios-books-async', async (req, res) => {
     try {
-        const response = await axios.get('http://localhost:5000/'); // call local endpoint
+        const response = await axios.get('http://localhost:5000/'); 
         res.status(200).send(response.data);
     } catch (error) {
         res.status(500).json({ message: "Error fetching books", error: error.message });
@@ -42,7 +42,7 @@ public_users.get('/axios-books-async', async (req, res) => {
 
 
 public_users.post("/register", (req, res) => {
-    const { username, password } = req.body; // get username and password from request body
+    const { username, password } = req.body; 
 
     // Check if both fields are provided
     if (!username || !password) {
@@ -99,7 +99,7 @@ public_users.get('/axios-title-async/:title', async (req, res) => {
     const title = decodeURIComponent(req.params.title); // decode spaces
 
     try {
-        const response = await axios.get('http://localhost:5000/'); // fetch all books
+        const response = await axios.get('http://localhost:5000/'); 
         const books = response.data;
         const bookKeys = Object.keys(books);
         const result = [];
