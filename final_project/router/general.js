@@ -29,19 +29,8 @@ public_users.get('/axios-isbn/:isbn', (req, res) => {
         });
 });
 
-// Get book list using Axios with Promise callbacks
-public_users.get('/axios-books', (req, res) => {
-    axios.get('http://localhost:5000/')  // call the local '/' endpoint
-        .then(response => {
-            res.status(200).send(response.data); // send the book list
-        })
-        .catch(error => {
-            res.status(500).json({ message: "Error fetching books", error: error.message });
-        });
-});
 
 
-// Get book list using Axios with async/await
 public_users.get('/axios-books-async', async (req, res) => {
     try {
         const response = await axios.get('http://localhost:5000/'); // call local endpoint
@@ -77,18 +66,6 @@ public_users.get('/',function (req, res) {
   return res.status(200).send(JSON.stringify(books, null, 4));
 });
 
-// Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-    const isbn = req.params.isbn; // get ISBN from URL
-    const book = books[isbn];     // look up book in the database
-
-    if (book) {
-        return res.status(200).send(JSON.stringify(book, null, 4));
-    } else {
-        return res.status(404).json({ message: "Book not found" });
-    }
-});
   
 // Get book details based on author
 public_users.get('/axios-author-async/:author', async (req, res) => {
@@ -117,24 +94,30 @@ public_users.get('/axios-author-async/:author', async (req, res) => {
     }
 });
 
-// Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  const title = decodeURIComponent(req.params.title); // decode spaces
-    const bookKeys = Object.keys(books); // get all ISBN keys
-    const result = [];
 
-    // Iterate through books and find matches
-    for (let key of bookKeys) {
-        if (books[key].title === title) {
-            result.push(books[key]);
+public_users.get('/axios-title-async/:title', async (req, res) => {
+    const title = decodeURIComponent(req.params.title); // decode spaces
+
+    try {
+        const response = await axios.get('http://localhost:5000/'); // fetch all books
+        const books = response.data;
+        const bookKeys = Object.keys(books);
+        const result = [];
+
+       // Iterate through books and find matches
+        for (let key of bookKeys) {
+            if (books[key].title === title) {
+                result.push(books[key]);
+            }
         }
-    }
 
-    if (result.length > 0) {
-        return res.status(200).send(JSON.stringify(result, null, 4));
-    } else {
-        return res.status(404).json({ message: "No books found with this title" });
+        if (result.length > 0) {
+            res.status(200).send(result);
+        } else {
+            res.status(404).json({ message: "No books found with this title" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching books", error: error.message });
     }
 });
 
