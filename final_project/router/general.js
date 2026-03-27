@@ -6,6 +6,29 @@ const axios = require('axios'); // add at the top with other requires
 const public_users = express.Router();
 
 
+
+
+
+
+public_users.get('/axios-isbn/:isbn', (req, res) => {
+    const isbn = req.params.isbn;
+
+    axios.get('http://localhost:5000/')
+        .then(response => {
+            const books = response.data;
+            const book = books[isbn];
+
+            if (book) {
+                res.status(200).send(book);
+            } else {
+                res.status(404).json({ message: "Book not found" });
+            }
+        })
+        .catch(error => {
+            res.status(500).json({ message: "Error fetching book details", error: error.message });
+        });
+});
+
 // Get book list using Axios with Promise callbacks
 public_users.get('/axios-books', (req, res) => {
     axios.get('http://localhost:5000/')  // call the local '/' endpoint
